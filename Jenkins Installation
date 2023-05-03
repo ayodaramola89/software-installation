@@ -1,0 +1,346 @@
+WHAT IS DEVOPS:
+This is not just tols but never ending process of continual improvement. It is: 1. Continuous Integration 2. Continuous Development 3. Continuous Testing 4. Continuos Development 5. Continuous Testing
+
+DEVOPS LIFECYCLE:
+	1. CONTINUOUS INTEGRATION PROCESS INVOLVES: i. Writing/Committing codes to Github/Gitlab/BitBucket ii. Build using Maven iii. Testing using Sonarqube iv. Integration Testing  v. Deployment
+
+NB: Whenever there is manual approvall we refered to the process as CONTINUOUS DELIVERY, while an Automated approval without human intervention is know as CONTINUOUS DEPLOYMENT
+
+DEVOPS PROCESSES:
+1. COMMIT/PUSH codes to GITHUB
+2. CLONE/PULL codes to Jenkins
+3. BUILD using MAVEN (jar/war/ear)
+4. CODE-QUALITY-ANALYSIS (SONARQUBE)
+5. UPLOAD ARTIFACTS using NEXUS
+6. DEPLOYMENT to TOMCAT (Appication Server)
+7. NOTIFICATION via Email/Slack/Pager
+===============================================================
+JENKINS INSTALLATION IN REDHAT ENTERPRISE LINUX 8 OS:
+
+>> vi jenkins-install.sh 
+
+#!/bin/bash 
+# CREATE HOSTNAME 
+sudo hostname jenkins-auto
+sudo su - ec2-user
+sudo yum install wget unzip git vim -y
+sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+sudo yum upgrade
+# Add required dependencies for the jenkins package
+sudo yum install java-11-openjdk -y 
+sudo yum install jenkins -y 
+sudo systemctl daemon-reload
+
+# start jenkins and enable the Jenkins service to start at boot with the command:
+sudo systemctl enable jenkins
+
+#You can start the Jenkins service with the command:=
+sudo systemctl start jenkins
+
+# You can check the status of the Jenkins service using the command:
+sudo systemctl status jenkins
+sudo su - ec2-user 
+
+=================END===============
+
+Log on to Jenkins using web browser by using the ipaddress and port number in the format below
+http//:10.10.10.10:8081 --->This will request for an admin password
+>> cat /var/lib/jenkins/secrets/initialAdminPassword
+
+Jenkins
+   automation tool 
+What is Jenkins automating ?
+  Is an open source CI tool written in java.
+
+How do you use Jenkins for CI/CD automation ?
+In Landmark, we manage federated JAVA based enterprise applications (web.ear) 
+for Fintech Clients/ DOD/ Ecommerce
+
+users/customers --------> [paymentApp/zelle/payPal]
+
+Development--->Test+Build-->CodeQuality-->BackUp--->AppServers
+1. Development---> [Git/GitHub,IDE]
+     7 --- REPOSITORIES 
+2. CodeQuality--->
+3. Test+Build-->-->
+4. BackUp--->
+5. AppServers
+6. Notification[email, slack]
+
+users[]--->webServers/LB---->App
+
+https://www.jenkins.io/doc/book/installing/   :
+Installing Jenkins:
+    Docker
+    Kubernetes
+    Linux
+    macOS
+    WAR files
+    Windows
+    Other Systems
+    Offline Installations
+    Initial Settings
+Jenkins installation:
+    1. Accros platform like:
+        Linux 
+        Windows 
+        MacOS  
+        Solaris 
+Jenkins installation in redhat enterprise Linux 8 OS:
+https://www.jenkins.io/doc/book/installing/linux/#red-hat-centos
+
+ connect to the jenkins server in AWS CLoud:
+    userName: ec2-user 
+    remoteHost address: 54.159.1.197  
+    password/ssh-keys: dominion.pem 
+    port22 is open in the firewall (security group) 
+   ssh -i dominion ec2-user@54.159.1.197  
+
+   We also need an ssh-client software like: 
+     mobaXterm / 
+     pUTTY
+   WE CAN also USE GIT BASH  or 
+   terminal(macOS users)  
+
+Jenkins-install.sh  
+# CREATE HOSTNAME 
+sudo hostname auto  
+
+sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+sudo yum upgrade
+# Add required dependencies for the jenkins package
+sudo yum install java-11-openjdk -y 
+sudo yum install jenkins -y 
+sudo systemctl daemon-reload
+# start jenkins 
+# Start Jenkins
+# You can enable the Jenkins service to start at boot with the command:
+sudo systemctl enable jenkins
+#You can start the Jenkins service with the command:=
+sudo systemctl start jenkins
+# You can check the status of the Jenkins service using the command:
+sudo systemctl status jenkins
+
+Jenkins port number = 8080 
+  JenkinsIP:JenkinsPortNumber 
+  JenkinsIP = 54.159.1.197
+  54.159.1.197:8080   
+  http://54.159.1.197:8080 
+  https://54.159.1.197:8080  
+jenkins url: http://54.159.1.197:8080/
+
+========================================
+https://github.com/LandmakTechnology/maven-web-application [public]
+https://github.com/LandmakTechnology/maven-web-app [private]
+===================================================
+Class of REPOSITORIES in SCM (Github):There are 2 classes of repository in Github ---> i. Public repository ii. Private repository
+=================================================
+
+  Tesla project:
+    Build + Releases + Development---
+Jenkins uses plugins to extenD itS functionality
+
+1. JENKINS-GIT/GITHUB INTEGRATION:
+  i. Install git in Jenkins server or Configure git plugin in Jenkins dashboard using the web browser
+CLASSES OF REPOSITORIES:
+- Private [] ---> https://github.com/LandmakTechnology/maven-web-application
+- Public ---> https://github.com/LandmakTechnology/maven-web-app
+
+  ii. Create credentials to access code in Github
+     Jenkins should be authorised to clone/pull code from  REPOSITORIES in SCM [GitHub/GitLab/BitBucket]
+      Configure Github credentials [userName & password/token]
+          userName: LEGAH2045 
+          Password/PAT : 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
+
+
+2. JENKINS-MAVEN INTEGRATION: clean install 
+    1. Go to  Manage Jenkins ---> go to Global Tool Configuration ---> maven3.8.4 ---> choose maven version ---> maven  
+    2. Build and invoke top maven target 
+    3. Jenkins SonarQube Integration;  mvn sonar:sonar
+
+3. JENKINS-SONARQUBE INTEGRSTION: mvn sonar:sonar
+    1. modify 'Properties' tag with SonarQube server details in  pom.xml
+    vi pom.xml:
+      <Property>
+        <sonar.host.url>http://3.83.86.27:9000/</sonar.host.url>
+    <sonar.login>class28</sonar.login>
+    <sonar.password>admin</sonar.password>
+      </Property>
+ 2. Open required ports (9000) in SonarQube server 
+    to allow traffic from jenkins server
+ 
+    or Install and configure JaCoCo plugin in Jenkins UI
+
+  Jenkins:
+    git--test--build--CodeQuality-- 
+
+    pom.xml 
+       JUnits 
+       selenium 
+
+
+4. Jenkins-Nexus Integration
+	mvn deploy:
+Upload build artifacts:
+--------------------------------------
+1. Create repos in nexus-UI to upload artifacts
+      http://100.26.133.141:8081/repository/paypal-releases/
+      http://100.26.133.141:8081/repository/paypal-snapshop/
+
+      Building /var/lib/jenkins/  workspace/ebay-java-app
+
+2. modify 'distributionManagement' tag with nexus repos details in  pom.xml
+>> vi pom.xml
+
+ http://100.26.133.141:8081/repository/paypal-snapshop/
+    status: 401 Unauthorized
+
+   3. modify /maven/conf/setting.xml in maven (JENKINS) server with login credentials
+        
+         # vi //conf/setting.xml
+            <server>
+                <id>nexus</id>
+                <username>admin</username>
+                <password>admin123</password>
+            </server> 
+
+    ii. Open required ports in Nexus server to allow traffic from jenkins server using:
+         mvn deploy 
+
+
+cd /var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven3.8.4 
+vi /var/lib/jenkins/tools/hudson.tasks.Maven_MavenInstallation/maven3.8.4/conf/settings.xml
+
+
+
+             
+   iii. modify /maven/conf/setting.xml in the Jenkins server with login credentials
+        
+         # vi /nexus/conf/setting.xml
+            <server>
+                <id>nexus</id>
+                <username>admin</username>
+                <password>admin123</password>
+            </server> 
+    
+    iv. Open required ports in Nexus server to allow traffic 
+    from jenkins server using:
+         mvn deploy 
+
+5. JENKINS-TOMCAT INTEGRATION:
+============================= 
+1. INSTALL 'Deploy to container' Plugin on Jenkins UI
+       JENKINS uses plugin to extend it functionality
+
+2. ADD A TOMCAT USER in /tomcat9/conf/tomcat-users.xml 
+   vi /tomcat9/conf/tomcat-users.xml 
+   mylandmark landmark 
+
+<user username="landmark" password="admin123" roles="manager-gui,admin-gui,manager-script"/>  
+<user username="LandmarkTechology" password="admin123" roles="manager-gui,admin-gui"/>
+
+
+============================================================================
+PLUGINS MANAGEMENT:
+Plugins are used to ease the execution of tasks or workloads in IT processes
+
+JENKINS PLUGINS: We used jenkins to automate tasks and run jobs/workloads
+	--- freestyle projects
+	--- maven projects
+	--- pipeline projects
+
+CATEGORY OF PROJECTS MANAGED USING JENKINS:
+	--- Software builds and testing
+	--- systems monitorings
+	--- infrastructure provisioning 
+	--- Infrastructure configuration management
+
+JENKINS PIPELINE PROJECTS:
+Jenkins pipeline are generally written in groovy
+Jenkins pipelines scripts are called JenkinsFile
+Jenkins pipeline is subdivided into scripted and declarative pipeline scripts
+===================================================================
+- SCRIPTED PIPELINE SCRIPTS
+When jenkins is installed it installed in a node
+
+Jenkinsfile ---> Pipeline Scripts
+=================================
+node{
+ def mavenHome = tool name:'maven3.8.6'
+ stage('1cloneCode'){
+	// generated pipeline script using private github repository
+	git credentialsId: 'GitCredentials', url: 'https://github.com/LandmakTechnology/maven-web-app"
+	//git "https://github.com/LandmakTechnology/maven-web-application"
+	//sh "git clone https://github.com/LandmakTechnology/maven-web-application"
+	//bat "git clone https://github.com/LandmakTechnology/maven-web-application"
+}
+ stage('2Test&Build'){
+	sh "${mavenHome}/bin/mvn install"
+}
+ stage('3CodeQuality'){
+	sh "${mavenHome}/bin/mvn sonar:sonar"
+}
+ stage('4UploadArtifacts'){
+	sh "${mavenHome}/bin/mvn deploy"
+}
+ stage('5deploy_uat'){}
+ stage('6deploy_prod'){}
+ stage('7Notification'){}
+}
+
+To create a credential for a private repository, go to the project --- configure ---- pipeline  syntax --git:Git --- pate the github repo url --- then add credentials and click on generate pipeline scripts
+
+=======================================================================
+Create a new pipeline project from an existing projects
+
+Jenkinsfile2 ---> Scriptive Pipeline
+=================================
+node{
+ def mavenHome = tool name:'maven3.8.6'
+ stage('1cloneCode'){
+	sh "echo running a software build and deployment project for paypal"
+	git "https://github.com/LandmakTechnology/maven-web-application"
+}
+ stage('2Test&Build'){
+	sh "${mavenHome}/bin/mvn install"
+}
+ stage('3CodeQuality'){
+	sh "${mavenHome}/bin/mvn sonar:sonar"
+}
+ stage('4UploadArtifacts'){
+	sh "${mavenHome}/bin/mvn deploy"
+}
+ stage('5Deploy-uat'){
+	//sh "scp"
+	deploy adapters: [tomcat9(credentialsId: 'tomcatCredentials', path: '', url: <tomcat-ipaddress:port-num>], contextPath: null, war:'target/*war
+}
+ stage('6Approval'){
+	timeout(time:9, unit: 'HOURS'){
+		input message:'Application ready for deployment, Please review an approve'
+}
+}
+ stage('7Deploy-Prod'){
+	//sh "scp"
+	deploy adapters: [tomcat9(credentialsId: 'tomcatCredentials', path: '', url: <tomcat-ipaddress:port-num>], contextPath: null, war:'target/*war
+}
+ stage('Notification'){
+ 	//generate pipeline syntax for email notification
+	emailext body: '''Build status for frontend application
+	
+	Regards, 
+	Landmark Technologies''', recipintsProviders:[buildUser(), developers(), contributor()], subject:'Build Status', to:'paypal-team@gmail.com	
+}
+}
+
+Deploy to container plugin:
+project -- configure -- pipeline syntax -- deploy to container --- enter target/*war --add container ---enter the tomcat url and add the credential --- generate pipeline scripts
+
+
+
+
+
+
